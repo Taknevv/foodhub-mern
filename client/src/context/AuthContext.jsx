@@ -2,32 +2,28 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+const getStoredUser = () => {
+  try {
+    const data = localStorage.getItem("foodhubUser");
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    return null;
+  }
+};
 
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("foodhubUser")) || null
-  );
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(getStoredUser);
 
   const login = (userData, token) => {
-
     localStorage.setItem("foodhubToken", token);
-
-    localStorage.setItem(
-      "foodhubUser",
-      JSON.stringify(userData)
-    );
-
+    localStorage.setItem("foodhubUser", JSON.stringify(userData));
     setUser(userData);
-
   };
 
   const logout = () => {
-
     localStorage.removeItem("foodhubToken");
     localStorage.removeItem("foodhubUser");
-
     setUser(null);
-
   };
 
   const isLoggedIn = !!user;
