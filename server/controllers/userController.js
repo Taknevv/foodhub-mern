@@ -46,7 +46,40 @@ const getFavorites = async (req, res) => {
   }
 };
 
+const Food = require("../models/Food");
+
+const getSellerProfile = async (req, res) => {
+  try {
+    const seller = await User.findById(req.params.id).select("-password");
+
+    if (!seller) {
+      return res.status(404).json({
+        success: false,
+        message: "Seller not found",
+      });
+    }
+
+    const foods = await Food.find({
+      user: seller._id,
+    }).sort({
+      createdAt: -1,
+    });
+
+    res.json({
+      success: true,
+      seller,
+      foods,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   toggleFavorite,
   getFavorites,
+  getSellerProfile,
 };
