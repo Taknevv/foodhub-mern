@@ -18,13 +18,10 @@ app.use(
 // ROUTES
 const userRoutes = require("./routes/userRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const foodRoutes = require("./routes/foodRoutes"); // ✅ MISSING BEFORE
 
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/foods", foodRoutes); // ✅ THIS FIXES 404
 
-// START
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on ${PORT}`);
-});
+module.exports = app;
