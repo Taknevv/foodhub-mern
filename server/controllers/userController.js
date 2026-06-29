@@ -1,59 +1,53 @@
 const User = require("../models/User");
 
-// Toggle Favorite
-const toggleFavorite = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    const foodId = req.params.id;
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const isFav = user.favorites.includes(foodId);
-
-    if (isFav) {
-      user.favorites = user.favorites.filter(
-        (id) => id.toString() !== foodId
-      );
-    } else {
-      user.favorites.push(foodId);
-    }
-
-    await user.save();
-
-    res.json({
-      success: true,
-      message: isFav
-        ? "Removed from favorites"
-        : "Added to favorites",
-      favorites: user.favorites,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+// REGISTER (must exist)
+const registerUser = async (req, res) => {
+  res.send("register");
 };
 
-// Get Favorites
-const getFavorites = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).populate("favorites");
+// LOGIN (must exist)
+const loginUser = async (req, res) => {
+  res.send("login");
+};
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+// FAVORITES
+const toggleFavorite = async (req, res) => {
+  const user = await User.findById(req.user.id);
 
-    res.json({
-      success: true,
-      favorites: user.favorites,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  const foodId = req.params.id;
+
+  const isFav = user.favorites.includes(foodId);
+
+  if (isFav) {
+    user.favorites = user.favorites.filter(
+      (id) => id.toString() !== foodId
+    );
+  } else {
+    user.favorites.push(foodId);
   }
+
+  await user.save();
+
+  res.json({
+    success: true,
+    message: isFav
+      ? "Removed from favorites"
+      : "Added to favorites",
+  });
+};
+
+const getFavorites = async (req, res) => {
+  const user = await User.findById(req.user.id).populate("favorites");
+
+  res.json({
+    success: true,
+    favorites: user.favorites,
+  });
 };
 
 module.exports = {
+  registerUser,
+  loginUser,
   toggleFavorite,
   getFavorites,
 };

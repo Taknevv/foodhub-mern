@@ -13,11 +13,9 @@ router.post("/", upload.single("image"), async (req, res) => {
       return res.status(400).json({ message: "No image uploaded" });
     }
 
-    // Convert buffer to base64
     const b64 = Buffer.from(req.file.buffer).toString("base64");
-    const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
-    // Upload to cloudinary
     const result = await cloudinary.uploader.upload(dataURI, {
       folder: "foodhub",
     });

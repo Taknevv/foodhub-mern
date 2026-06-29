@@ -10,7 +10,7 @@ const {
   getFavorites,
 } = require("../controllers/userController");
 
-// AUTH ROUTES
+// AUTH
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 

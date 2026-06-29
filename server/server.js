@@ -1,9 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
-const app = express(); // ✅ MUST be first
+const app = express();
 
-// Middleware
 app.use(express.json());
 
 app.use(
@@ -16,18 +15,16 @@ app.use(
   })
 );
 
-// Routes
+// ROUTES
 const userRoutes = require("./routes/userRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Server
+// START
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log("=================================");
-  console.log(`🚀 Server running on Port ${PORT}`);
-  console.log("=================================");
+  console.log(`🚀 Server running on ${PORT}`);
 });
