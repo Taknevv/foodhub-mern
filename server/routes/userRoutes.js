@@ -9,6 +9,7 @@ const {
 } = require("../controllers/userController");
 
 router.post("/favorite/:id", protect, toggleFavorite);
+
 router.get("/favorites", protect, getFavorites);
 
 module.exports = router;

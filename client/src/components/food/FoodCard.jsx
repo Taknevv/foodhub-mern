@@ -30,13 +30,17 @@ export default function FoodCard({
 
   // ✅ Toggle favorite (backend connected)
   const handleFavorite = async () => {
-    try {
-      setLiked((prev) => !prev);
-      await api.post(`/users/favorite/${_id}`);
-    } catch (err) {
-      console.log("Favorite error:", err.message);
+  try {
+    await api.post(`/users/favorite/${_id}`);
+    setLiked(!liked);
+  } catch (err) {
+    console.log(err);
+
+    if (err.response?.status === 401) {
+      alert("Please login first.");
     }
-  };
+  }
+};
 
   return (
     <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden hover:-translate-y-2">
