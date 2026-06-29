@@ -32,7 +32,7 @@ export default function Login() {
 
     try {
 
-      const res = await api.post("/auth/login", form);
+      const res = await api.post("/users/login", form);
 
       login(res.data.user, res.data.token);
 
