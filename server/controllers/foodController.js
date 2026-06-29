@@ -1,13 +1,89 @@
 const Food = require("../models/Food");
 
+// ==========================================
+// Get All Foods (Search + Filters + Sorting)
+// ==========================================
 const getFoods = async (req, res) => {
   try {
-    const foods = await Food.find().sort({
-      createdAt: -1,
-    });
+    const {
+      search,
+      category,
+      location,
+      minPrice,
+      maxPrice,
+      sort,
+    } = req.query;
 
-    res.json({
+    let query = {};
+
+    // Search by title or seller
+    if (search) {
+      query.$or = [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          seller: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    // Category
+    if (category && category !== "All") {
+      query.category = category;
+    }
+
+    // Location
+    if (location) {
+      query.location = {
+        $regex: location,
+        $options: "i",
+      };
+    }
+
+    // Price Range
+    if (minPrice || maxPrice) {
+      query.price = {};
+
+      if (minPrice) {
+        query.price.$gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        query.price.$lte = Number(maxPrice);
+      }
+    }
+
+    let foods = Food.find(query);
+
+    switch (sort) {
+      case "priceAsc":
+        foods = foods.sort({ price: 1 });
+        break;
+
+      case "priceDesc":
+        foods = foods.sort({ price: -1 });
+        break;
+
+      case "latest":
+        foods = foods.sort({ createdAt: -1 });
+        break;
+
+      default:
+        foods = foods.sort({ createdAt: -1 });
+    }
+
+    foods = await foods;
+
+    res.status(200).json({
       success: true,
+      count: foods.length,
       foods,
     });
   } catch (error) {
@@ -18,6 +94,9 @@ const getFoods = async (req, res) => {
   }
 };
 
+// =====================
+// Add Food
+// =====================
 const addFood = async (req, res) => {
   try {
     const {
@@ -72,9 +151,15 @@ const addFood = async (req, res) => {
   }
 };
 
+// =====================
+// Get Food By ID
+// =====================
 const getFoodById = async (req, res) => {
   try {
-    const food = await Food.findById(req.params.id);
+    const food = await Food.findById(req.params.id).populate(
+      "user",
+      "_id username email"
+    );
 
     if (!food) {
       return res.status(404).json({
@@ -95,7 +180,9 @@ const getFoodById = async (req, res) => {
   }
 };
 
-// Get Logged-in User Foods
+// =====================
+// My Listings
+// =====================
 const getMyFoods = async (req, res) => {
   try {
     const foods = await Food.find({
@@ -117,7 +204,9 @@ const getMyFoods = async (req, res) => {
   }
 };
 
+// =====================
 // Delete Food
+// =====================
 const deleteFood = async (req, res) => {
   try {
     const food = await Food.findById(req.params.id);
@@ -129,7 +218,6 @@ const deleteFood = async (req, res) => {
       });
     }
 
-    // Only owner can delete
     if (food.user.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -151,12 +239,12 @@ const deleteFood = async (req, res) => {
   }
 };
 
+// =====================
+// Update Food
+// =====================
 const updateFood = async (req, res) => {
   try {
-    const food = await Food.findById(req.params.id).populate(
-      "user",
-      "_id username email"
-    );
+    const food = await Food.findById(req.params.id);
 
     if (!food) {
       return res.status(404).json({
@@ -193,8 +281,6 @@ const updateFood = async (req, res) => {
     });
   }
 };
-
-
 
 module.exports = {
   getFoods,

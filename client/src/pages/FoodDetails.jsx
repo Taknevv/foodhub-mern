@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import api from "../services/api";
-import Layout from "../components/common/Layout";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -9,14 +7,27 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 
+import api from "../services/api";
+import Layout from "../components/common/Layout";
+import { useAuth } from "../context/AuthContext";
+import ReviewList from "../components/food/ReviewList";
+import AddReview from "../components/food/AddReview";
+
 export default function FoodDetails() {
   const { id } = useParams();
+
+  const { isLoggedIn } = useAuth();
 
   const [food, setFood] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [reviews, setReviews] = useState([]);
+  const [average, setAverage] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+
   useEffect(() => {
     fetchFood();
+    fetchReviews();
   }, [id]);
 
   const fetchFood = async () => {
@@ -27,6 +38,18 @@ export default function FoodDetails() {
       console.log(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const res = await api.get(`/reviews/${id}`);
+
+      setReviews(res.data.reviews);
+      setAverage(res.data.average);
+      setTotalReviews(res.data.total);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -53,14 +76,17 @@ export default function FoodDetails() {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto px-6 py-10">
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
 
+          {/* IMAGE */}
           <img
             src={food.image}
             alt={food.title}
             className="w-full h-96 object-cover"
           />
 
+          {/* CONTENT */}
           <div className="p-8">
 
             <div className="flex justify-between items-center">
@@ -73,20 +99,26 @@ export default function FoodDetails() {
               </span>
             </div>
 
+            {/* Rating */}
             <div className="flex items-center gap-2 mt-3 text-yellow-500">
               <FaStar />
-              4.8 Rating
+              <span>
+                {average} ({totalReviews} Reviews)
+              </span>
             </div>
 
+            {/* Description */}
             <p className="mt-5 text-gray-600 dark:text-gray-300">
               {food.description}
             </p>
 
+            {/* Location */}
             <div className="mt-5 flex items-center gap-2">
               <FaMapMarkerAlt />
               {food.location}
             </div>
 
+            {/* Seller */}
             <div className="mt-6">
               <h3 className="font-semibold text-orange-500">
                 Seller Details
@@ -100,6 +132,7 @@ export default function FoodDetails() {
               </Link>
             </div>
 
+            {/* Buttons */}
             <div className="flex gap-4 mt-8">
 
               <a
@@ -122,8 +155,26 @@ export default function FoodDetails() {
 
             </div>
 
+            {/* Reviews */}
+            <hr className="my-10" />
+
+            <h2 className="text-3xl font-bold mb-6">
+              Reviews
+            </h2>
+
+            <ReviewList reviews={reviews} />
+
+            {isLoggedIn && (
+              <AddReview
+                foodId={id}
+                onReviewAdded={fetchReviews}
+              />
+            )}
+
           </div>
+
         </div>
+
       </div>
     </Layout>
   );
