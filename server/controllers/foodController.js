@@ -153,7 +153,10 @@ const deleteFood = async (req, res) => {
 
 const updateFood = async (req, res) => {
   try {
-    const food = await Food.findById(req.params.id);
+    const food = await Food.findById(req.params.id).populate(
+      "user",
+      "_id username email"
+    );
 
     if (!food) {
       return res.status(404).json({

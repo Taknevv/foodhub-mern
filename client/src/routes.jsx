@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import FoodDetails from "./pages/FoodDetails";
 import MyListings from "./pages/MyListings";
 import EditFood from "./pages/EditFood";
+import SellerProfile from "./pages/SellerProfile";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -22,6 +23,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/foods/:id" element={<FoodDetails />} />
+      <Route path="/seller/:id" element={<SellerProfile />} />
 
       {/* PROTECTED ROUTES */}
       <Route

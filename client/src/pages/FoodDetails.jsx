@@ -93,7 +93,12 @@ export default function FoodDetails() {
               <h3 className="font-semibold text-orange-500">
                 Seller Details
               </h3>
-              <p className="dark:text-white">👤 {food.seller}</p>
+              <Link
+                to={`/seller/${food.user?._id}`}
+                className="text-orange-600 hover:underline"
+              >
+                👤 {food.seller}
+              </Link>
             </div>
 
             {/* BUTTONS */}
