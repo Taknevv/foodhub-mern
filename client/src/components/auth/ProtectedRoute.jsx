@@ -2,12 +2,11 @@ import { useAuth } from "../../context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children }) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, loading } = useAuth();
 
-  const token = localStorage.getItem("foodhubToken");
+  if (loading) return null; // or spinner
 
-  // safer check (prevents refresh bug)
-  if (!isLoggedIn && !token) {
+  if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
 
