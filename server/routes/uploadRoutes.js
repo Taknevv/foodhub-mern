@@ -1,16 +1,17 @@
 const express = require("express");
 const router = express.Router();
-
-const cloudinary = require("../config/cloudinary");
 const multer = require("multer");
+const cloudinary = require("../config/cloudinary");
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: "No image uploaded" });
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
     }
 
     const b64 = Buffer.from(req.file.buffer).toString("base64");
@@ -24,10 +25,10 @@ router.post("/", upload.single("image"), async (req, res) => {
       success: true,
       imageUrl: result.secure_url,
     });
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: err.message,
     });
   }
 });

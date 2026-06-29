@@ -55,9 +55,7 @@ export default function EditFood() {
       toast.success("Food Updated Successfully 🍕");
       navigate("/my-listings");
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Update failed"
-      );
+      toast.error(err.response?.data?.message || "Update failed");
     }
 
     setLoading(false);
@@ -131,12 +129,35 @@ export default function EditFood() {
               placeholder="Location"
             />
 
+            {/* ✅ IMAGE UPLOAD FIX */}
             <input
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              className="w-full border p-4 rounded-xl"
-              placeholder="Image URL"
+              type="file"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files[0];
+
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append("image", file);
+
+                try {
+                  const res = await api.post("/upload", formData, {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    },
+                  });
+
+                  setForm({
+                    ...form,
+                    image: res.data.imageUrl,
+                  });
+
+                  toast.success("Image uploaded successfully");
+                } catch (err) {
+                  toast.error("Image upload failed");
+                }
+              }}
             />
 
             <input
@@ -156,6 +177,7 @@ export default function EditFood() {
               rows="4"
             />
 
+            {/* Preview */}
             {form.image && (
               <img
                 src={form.image}

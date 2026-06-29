@@ -1,25 +1,17 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
+const getUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("foodhubUser"));
+  } catch {
+    return null;
+  }
+};
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // load user once on app start
-  useEffect(() => {
-    const storedUser = localStorage.getItem("foodhubUser");
-
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        setUser(null);
-      }
-    }
-
-    setLoading(false);
-  }, []);
+  const [user, setUser] = useState(getUser());
 
   const login = (userData, token) => {
     localStorage.setItem("foodhubToken", token);
@@ -40,7 +32,6 @@ export function AuthProvider({ children }) {
         login,
         logout,
         isLoggedIn: !!user,
-        loading,
       }}
     >
       {children}
