@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/common/Layout";
 import {
@@ -33,7 +33,9 @@ export default function FoodDetails() {
   if (loading) {
     return (
       <Layout>
-        <div className="text-center py-20 text-xl">Loading...</div>
+        <div className="text-center py-20 text-xl">
+          Loading...
+        </div>
       </Layout>
     );
   }
@@ -51,17 +53,14 @@ export default function FoodDetails() {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto px-6 py-10">
-
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
 
-          {/* IMAGE */}
           <img
             src={food.image}
             alt={food.title}
             className="w-full h-96 object-cover"
           />
 
-          {/* CONTENT */}
           <div className="p-8">
 
             <div className="flex justify-between items-center">
@@ -88,20 +87,19 @@ export default function FoodDetails() {
               {food.location}
             </div>
 
-            {/* SELLER */}
             <div className="mt-6">
               <h3 className="font-semibold text-orange-500">
                 Seller Details
               </h3>
+
               <Link
-                to={`/seller/${food.user?._id}`}
+                to={`/seller/${food.user}`}
                 className="text-orange-600 hover:underline"
               >
                 👤 {food.seller}
               </Link>
             </div>
 
-            {/* BUTTONS */}
             <div className="flex gap-4 mt-8">
 
               <a
