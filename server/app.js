@@ -17,7 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS (IMPORTANT FIX)
 app.use(
   cors({
     origin: [
@@ -36,9 +35,10 @@ app.get("/", (req, res) => {
   });
 });
 
-// Routes
+// ROUTES (FINAL CLEAN)
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/foods", require("./routes/foodRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
+app.use("/api/users", require("./routes/userRoutes")); // only favorites
 
 module.exports = app;
